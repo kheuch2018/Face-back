@@ -9,7 +9,7 @@
   "keywords": [],
   "author": "Cheikh Seck <cheikhseck980@gmail.com> (kheuch.netlify.app)",
   "license": "ISC",
-  "script":{
+  "scripts": {
     "start": "node ."
   },
   "dependencies": {
