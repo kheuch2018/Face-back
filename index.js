@@ -129,7 +129,7 @@ let compareFaces = (res,fileName) => {
  */
 app.post("/api/upload", function (req, res, next) {
   // This grabs the additional parameters so in this case passing in
-
+console.log("heho")
   const { idUser: fileName } = req.body;
   if (!fileName) return res.status(400).send({ err: "Paramètres invalides" });
   var busboy = new Busboy({ headers: req.headers });
