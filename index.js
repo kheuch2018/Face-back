@@ -9,19 +9,38 @@ const BUCKET_NAME = "kalpay-faces";
 const IAM_USER_KEY = "AKIAQ7YRTJKBNGGTTA4X";
 const IAM_USER_SECRET = "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";
 AWS.config.region = "us-east-2";
-// AWS.config.region="us-east-2"
-// AWS.config.accessKeyId=IAM_USER_KEY
-// AWS.config.secretAccessKey=IAM_USER_SECRET
 const config = new AWS.Config({
   accessKeyId: IAM_USER_KEY,
   secretAccessKey: IAM_USER_SECRET,
   region: "us-east-1",
 });
 
+const swaggerJsDoc = require('swagger-jsdoc')
+const swaggerUI = require('swagger-ui-express')
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    info: {
+      title: "Faces Comparing API",
+      description: "compare two faces and give a confidence degree",
+      contact: {
+        name: "Cheikh Seck"
+      },
+      servers: ["http://localhost: 5000"]
+    }
+  },
+  apis: ["index.js"]
+}
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions)
+
 bodyParser.json({ limit: "50mb" });
 app.use(bodyParser.json());
 app.use(fileupload());
 app.use(cors());
+
+app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocs))
+
 
 function uploadToS3(file, fileName, res,type) {
   let s3bucket = new AWS.S3({
@@ -83,12 +102,31 @@ let compareFaces = (res,fileName) => {
       }); // for response.faceDetails
 
       response.UnmatchedFaces.forEach((data) => {
-        res.status(400).send({err: "Les faces ne matchent pas" });
+        res.status(404).send({err: "Faces not matching" });
       })
     } // if
   });
 }
-
+/**
+ * @swagger
+ * /api/upload:
+ *  post:
+ *    description: Used to upload user image when signing up
+ *    parameters:
+ *      - name: image
+ *        description: Image to upload
+ *        in: body
+ *        required: true
+ *      - name: idUser
+ *        description: Id of the user
+ *        in: body
+ *        required: true
+ *    responses:
+ *      '200': 
+ *        description: Image uploaded successfuly
+ *      '400':
+ *        description: Invalid parameters
+ */
 app.post("/api/upload", function (req, res, next) {
   // This grabs the additional parameters so in this case passing in
 
@@ -114,6 +152,31 @@ app.post("/api/upload", function (req, res, next) {
   req.pipe(busboy);
 });
 
+
+
+
+/**
+ * @swagger
+ * /api/identify:
+ *  post:
+ *    description: Used to identify the user
+ *    parameters:
+ *      - name: image
+ *        description: Image to upload for identification
+ *        in: body
+ *        required: true
+ *      - name: idUser
+ *        description: Id of the user
+ *        in: body
+ *        required: true
+ *    responses:
+ *      '200': 
+ *        description: Image uploaded successfuly
+ *      '400':
+ *        description: Invalid parameters
+ *      '404':
+ *        description: Faces not matching
+ */
 app.post("/api/identify", (req, res) => {
   const { idUser:fileName } = req.body;
   if(!fileName) return res.status(400).send({ err: "Paramètres invalides" });
