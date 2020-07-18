@@ -6,8 +6,8 @@ const Busboy = require("busboy");
 const AWS = require("aws-sdk");
 var fileupload = require("express-fileupload");
 const BUCKET_NAME = "kalpay-faces";
-const IAM_USER_KEY = "AKIAQ7YRTJKBNGGTTA4X";
-const IAM_USER_SECRET = "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";
+const IAM_USER_KEY = "AKIAQ7YRTJKBIKVYEZYW";
+const IAM_USER_SECRET = "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";
 AWS.config.region = "us-east-2";
 const config = new AWS.Config({
   accessKeyId: IAM_USER_KEY,
