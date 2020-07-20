@@ -9,6 +9,8 @@ const BUCKET_NAME = "kalpay-faces";
 const IAM_USER_KEY = "AKIAQ7YRTJKBIKVYEZYW";
 const IAM_USER_SECRET = "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";
 AWS.config.region = "us-east-2";
+AWS.config.accessKeyId = IAM_USER_KEY;
+AWS.config.secretAccessKey = IAM_USER_SECRET;
 const config = new AWS.Config({
   accessKeyId: IAM_USER_KEY,
   secretAccessKey: IAM_USER_SECRET,
@@ -144,7 +146,7 @@ console.log("heho")
     const { image: file } = req.files;
 
     console.log(file);
-
+    
     // Begins the upload to the AWS S3
     uploadToS3(file, fileName, res);
   });
@@ -179,7 +181,7 @@ console.log("heho")
  */
 app.post("/api/identify", (req, res) => {
   const { idUser:fileName } = req.body;
-  if(!fileName) return res.status(400).send({ err: "Paramètres invalides" });
+  if(!fileName) return res.status(400).send({ err: "Paramètres invalides -2" });
   var busboy = new Busboy({ headers: req.headers });
     
   // The file upload has completed
@@ -188,7 +190,7 @@ app.post("/api/identify", (req, res) => {
     
     // Grabs your file object from the request.
     if (!req.files || !req.files.image)
-      return res.status(400).send({ err: "Paramètres invalides" });
+      return res.status(400).send({ err: "Paramètres invalides -1" });
     const { image: file } = req.files;
 
     console.log(file);
