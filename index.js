@@ -91,8 +91,8 @@ let detectFaces = (res, fn,idImage) => {
     console.log("smile",response.FaceDetails[0].Smile)
     // return res.send(response)
     if(response.FaceDetails && 
-      response.FaceDetails[0].Smile.Value && response.FaceDetails[0].Smile.Confidence > 80 && 
-      !response.FaceDetails[0].EyesOpen.Value && response.FaceDetails[0].EyesOpen.Confidence > 80 
+      response.FaceDetails[0].Smile.Value && 
+      !response.FaceDetails[0].EyesOpen.Value 
       ) {
      console.log("Face is detected")
         
