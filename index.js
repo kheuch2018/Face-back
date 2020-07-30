@@ -87,7 +87,8 @@ let detectFaces = (res, fn,idImage) => {
   
   client.detectFaces(params2,(err,response) => {
     if(err) return res.status(400).send({err: "No face detected", code: 3 })
-    console.log(response)
+    console.log("eyes",response.FaceDetails[0].EyesOpen)
+    console.log("smile",response.FaceDetails[0].Smile)
     // return res.send(response)
     if(response.FaceDetails && 
       response.FaceDetails[0].Smile.Value && response.FaceDetails[0].Smile.Confidence > 80 && 
