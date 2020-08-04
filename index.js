@@ -5,17 +5,13 @@ const bodyParser = require("body-parser");
 const Busboy = require("busboy");
 const AWS = require("aws-sdk");
 var fileupload = require("express-fileupload");
-const BUCKET_NAME = "kalpay-faces";
-const IAM_USER_KEY = "AKIAQ7YRTJKBIKVYEZYW";
-const IAM_USER_SECRET = "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";
-AWS.config.region = "us-east-2";
-AWS.config.accessKeyId = IAM_USER_KEY;
-AWS.config.secretAccessKey = IAM_USER_SECRET;
-const config = new AWS.Config({
-  accessKeyId: IAM_USER_KEY,
-  secretAccessKey: IAM_USER_SECRET,
-  region: "us-east-1",
-});
+const keys = require("./keys")
+
+
+AWS.config.region = keys.AWS_REGION;
+AWS.config.accessKeyId = keys.IAM_USER_KEY;
+AWS.config.secretAccessKey = keys.IAM_USER_SECRET;
+
 
 const swaggerJsDoc = require('swagger-jsdoc')
 const swaggerUI = require('swagger-ui-express')
@@ -43,12 +39,12 @@ app.use(cors());
 
 app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocs))
 let s3bucket = new AWS.S3({
-  accessKeyId: IAM_USER_KEY,
-  secretAccessKey: IAM_USER_SECRET,
-  Bucket: BUCKET_NAME,
+  accessKeyId: keys.IAM_USER_KEY,
+  secretAccessKey: keys.IAM_USER_SECRET,
+  Bucket: keys.BUCKET_NAME,
 });
 var params = {
-  Bucket: BUCKET_NAME,
+  Bucket: keys.BUCKET_NAME,
   Key: "",
   Body: "",
 };
@@ -65,9 +61,7 @@ function uploadToS3(userImage, idImage, fileName, res) {
 
       
       detectFaces(res,fileName,idImage)
-      
-      // if(type!=="compare") return res.send({ success: "Face correct" });
-      // compareFaces(res,fileName)
+
       
     })
   })
@@ -87,12 +81,13 @@ let detectFaces = (res, fn,idImage) => {
   
   client.detectFaces(params2,(err,response) => {
     if(err) return res.status(400).send({err: "No face detected", code: 3 })
-    console.log("eyes",response.FaceDetails[0].EyesOpen)
+    // console.log("eyes",response.FaceDetails[0].EyesOpen)
     console.log("smile",response.FaceDetails[0].Smile)
     // return res.send(response)
     if(response.FaceDetails && 
-      response.FaceDetails[0].Smile.Value && 
-      !response.FaceDetails[0].EyesOpen.Value 
+      response.FaceDetails[0].Smile.Value 
+      // && 
+      // !response.FaceDetails[0].EyesOpen.Value 
       ) {
      console.log("Face is detected")
         
@@ -127,13 +122,13 @@ let compareFaces = (res,fileName) => {
   const Myparams = {
     SourceImage: {
       S3Object: {
-        Bucket: BUCKET_NAME,
+        Bucket: keys.BUCKET_NAME,
         Name: "compare"+fileName,
       },
     },
     TargetImage: {
       S3Object: {
-        Bucket: BUCKET_NAME,
+        Bucket: keys.BUCKET_NAME,
         Name: fileName,
       },
     },
@@ -174,7 +169,7 @@ let compareFaces = (res,fileName) => {
  *        in: body
  *        required: true
  *      - name: userImage
- *        description: Image of the user with eyes closed and smiling
+ *        description: Image of the user smiling
  *        in: body
  *        required: true
  *      - name: idUser
@@ -212,4 +207,6 @@ app.post("/api/identify", (req, res) => {
   req.pipe(busboy);
 });
 
-app.listen(process.env.PORT || 5000, () => console.log("listening on port 5000 ..."));
+const port = process.env.PORT || 5000
+
+app.listen(port, () => console.log(`listening on port ${port} ...`));
