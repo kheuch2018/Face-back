@@ -133,7 +133,7 @@ let compareFaces = (res,fileName) => {
         Name: fileName,
       },
     },
-    // SimilarityThreshold: 70,
+    SimilarityThreshold: 90,
   };
 
   client.compareFaces(Myparams, (err, response) => {
