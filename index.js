@@ -85,7 +85,8 @@ let detectFaces = (res, fn,idImage) => {
     console.log("smile",response.FaceDetails[0].Smile)
     // return res.send(response)
     if(response.FaceDetails && 
-      response.FaceDetails[0].Smile.Value 
+     response.FaceDetails[0].Smile && 
+     response.FaceDetails[0].Smile.Value 
       // && 
       // !response.FaceDetails[0].EyesOpen.Value 
       ) {
