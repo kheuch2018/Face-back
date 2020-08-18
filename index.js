@@ -51,7 +51,7 @@ var params = {
 
 function uploadToS3(userImage, idImage, fileName, res) {
   s3bucket.createBucket(function () {
-    params.Key=fileName
+    params.Key=idImage ? fileName : "compare"+fileName
     params.Body=userImage.data
     s3bucket.upload(params, function (err, data) {
       if (err) {
@@ -59,8 +59,11 @@ function uploadToS3(userImage, idImage, fileName, res) {
       }
      console.log("upload 1 succeed")
 
-      
-      detectFaces(res,fileName,idImage)
+      if(!idImage) {
+        compareFaces(res,fileName)
+      }else{
+        detectFaces(res,fileName,idImage)
+      }
 
       
     })
@@ -207,6 +210,29 @@ app.post("/api/identify", (req, res) => {
 
   req.pipe(busboy);
 });
+
+app.post("/api/verify",(req,res) => {
+  const { idUser:fileName } = req.body;
+  if(!fileName) return res.status(400).send({ err: "Paramètres invalides ",code: 0 });
+  var busboy = new Busboy({ headers: req.headers });
+    
+  // The file upload has completed
+  busboy.on("finish", function () {
+    console.log("Upload finished");
+    
+    // Grabs your file object from the request.
+    if (!req.files || !req.files.userImage)
+      return res.status(400).send({ err: "Paramètres invalides ", code: 1 });
+    const { userImage } = req.files;
+
+    // Begins the upload to the AWS S3
+
+    uploadToS3(userImage,null,fileName,res);
+  });
+
+
+  req.pipe(busboy);
+})
 
 const port = process.env.PORT || 5000
 
