@@ -1,7 +1,8 @@
+require("dotenv")
 module.exports={
     BUCKET_NAME: "kalpay-faces",
-    IAM_USER_KEY: "AKIAQ7YRTJKBPECRB2MC",
-    IAM_USER_SECRET: "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",
+    IAM_USER_KEY: process.env.USER_KEY,
+    IAM_USER_SECRET: process.env.USER_SECRET,
     AWS_REGION: "us-east-2"
 }
 
