@@ -1,4 +1,4 @@
-require("dotenv")
+require("dotenv").config()
 module.exports={
     BUCKET_NAME: "kalpay-faces",
     IAM_USER_KEY: process.env.USER_KEY,
