@@ -11,7 +11,7 @@ const keys = require("./keys")
 AWS.config.region = keys.AWS_REGION;
 AWS.config.accessKeyId = keys.IAM_USER_KEY;
 AWS.config.secretAccessKey = keys.IAM_USER_SECRET;
-
+console.log(keys.IAM_USER_KEY,keys.IAM_USER_SECRET)
 
 const swaggerJsDoc = require('swagger-jsdoc')
 const swaggerUI = require('swagger-ui-express')
